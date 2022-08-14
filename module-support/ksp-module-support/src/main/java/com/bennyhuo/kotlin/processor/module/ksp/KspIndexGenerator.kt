@@ -33,8 +33,7 @@ internal class KspIndexGenerator(
             .addAnnotation(
                 AnnotationSpec.builder(LibraryIndex::class.java)
                     .addMember(
-                        "value", "{${sortedElementNames.joinToString { "\$S" }}}",
-                        *sortedElementNames.toTypedArray()
+                        "value = [${sortedElementNames.joinToString { "\"$it\"" }}]",
                     ).build()
             ).also { typeBuilder ->
                 elements.mapNotNull {
@@ -45,6 +44,8 @@ internal class KspIndexGenerator(
             }
             .build()
 
-        FileSpec.builder(PACKAGE_NAME, typeSpec.name!!).build().writeTo(env.codeGenerator, true)
+        FileSpec.builder(PACKAGE_NAME, typeSpec.name!!)
+            .addType(typeSpec)
+            .build().writeTo(env.codeGenerator, true)
     }
 }

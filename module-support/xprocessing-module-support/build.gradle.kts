@@ -7,7 +7,8 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":module-support:common-module-support"))
+
+    api(project(":module-support:common-module-support"))
 
     compileOnly("androidx.room:room-compiler-processing:2.4.0")
 }

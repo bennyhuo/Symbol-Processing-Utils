@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":module-support:common-module-support"))
+    api(project(":module-support:common-module-support"))
 
     compileOnly("com.google.devtools.ksp:symbol-processing-api:1.7.10-1.0.6")
     compileOnly("com.squareup:kotlinpoet-ksp:1.12.0")
