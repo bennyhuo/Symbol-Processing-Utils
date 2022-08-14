@@ -14,6 +14,7 @@ abstract class KspModuleProcessor(
 ) : SymbolProcessor {
 
     abstract val annotations: Set<String>
+    abstract val processorName: String
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val elementsByAnnotation = annotations.associateWith { resolver.getSymbolsWithAnnotation(it).toSet() }
@@ -34,7 +35,7 @@ abstract class KspModuleProcessor(
         resolver: Resolver,
         elementsByAnnotation: Map<String, Set<KSAnnotated>>
     ): List<KSAnnotated> {
-        KspIndexGenerator(env).generate(elementsByAnnotation.values.flatMap {
+        KspIndexGenerator(env, processorName).generate(elementsByAnnotation.values.flatMap {
             it.map { it.toUniElement() }
         })
         return emptyList()

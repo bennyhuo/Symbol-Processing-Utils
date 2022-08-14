@@ -10,10 +10,10 @@ import com.bennyhuo.kotlin.processor.module.utils.OPTION_KEY_LIBRARY
  */
 abstract class XProcessingModuleStep : XProcessingStep {
 
-    open val optionKeyPrefix = "module"
+    abstract val processorName: String
 
     final override fun process(env: XProcessingEnv, elementsByAnnotation: Map<String, Set<XElement>>): Set<XElement> {
-        val isMainModule = !env.options["${optionKeyPrefix}.${OPTION_KEY_LIBRARY}"].toBoolean()
+        val isMainModule = !env.options["${processorName}.${OPTION_KEY_LIBRARY}"].toBoolean()
         return if (isMainModule) {
             val elementsFromLibrary = XProcessingIndexLoader(env, annotations()).loadUnwrap()
             processMain(env, elementsByAnnotation.mapValues {
@@ -28,7 +28,7 @@ abstract class XProcessingModuleStep : XProcessingStep {
     abstract fun processMain(env: XProcessingEnv, elementsByAnnotation: Map<String, Set<XElement>>): Set<XElement>
 
     open fun processLibrary(env: XProcessingEnv, elementsByAnnotation: Map<String, Set<XElement>>): Set<XElement> {
-        XProcessingIndexGenerator(env).generate(elementsByAnnotation.values.flatMap {
+        XProcessingIndexGenerator(env, processorName).generate(elementsByAnnotation.values.flatMap {
             it.map { it.toUniElement() }
         })
         return emptySet()

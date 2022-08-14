@@ -13,6 +13,7 @@ import javax.lang.model.element.TypeElement
 abstract class AptModuleProcessor : AbstractProcessor() {
 
     lateinit var env: ProcessingEnvironment
+    abstract val processorName: String
 
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
@@ -41,7 +42,7 @@ abstract class AptModuleProcessor : AbstractProcessor() {
     abstract fun processMain(roundEnv: RoundEnvironment, elementsByAnnotation: Map<String, Set<Element>>): Set<Element>
 
     open fun processLibrary(roundEnv: RoundEnvironment, elementsByAnnotation: Map<String, Set<Element>>): Set<Element> {
-        AptIndexGenerator(env).generate(elementsByAnnotation.values.flatMap {
+        AptIndexGenerator(env, processorName).generate(elementsByAnnotation.values.flatMap {
             it.map { it.toUniElement() }
         })
         return emptySet()

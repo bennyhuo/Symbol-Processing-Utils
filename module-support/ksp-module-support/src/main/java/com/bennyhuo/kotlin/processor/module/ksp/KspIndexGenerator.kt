@@ -19,7 +19,8 @@ import com.squareup.kotlinpoet.ksp.writeTo
  * Created by benny.
  */
 internal class KspIndexGenerator(
-    private val env: SymbolProcessorEnvironment
+    private val env: SymbolProcessorEnvironment,
+    private val processorName: String
 ) : IndexGenerator {
 
     override fun generate(elements: Collection<UniElement>) {
@@ -27,7 +28,7 @@ internal class KspIndexGenerator(
 
         val sortedElementNames = elements.map { it.enclosingTypeName }.sortedBy { it }
 
-        val indexName = "LibraryIndex_${generateName(sortedElementNames)}"
+        val indexName = "${processorName.capitalize()}Index_${generateName(sortedElementNames)}"
         val typeSpec = TypeSpec.classBuilder(indexName)
             .addAnnotation(
                 AnnotationSpec.builder(LibraryIndex::class.java)
@@ -37,7 +38,7 @@ internal class KspIndexGenerator(
                     ).build()
             ).also { typeBuilder ->
                 elements.mapNotNull {
-                    (it.rawElement as KSAnnotated).containingFile
+                    it.unwrap<KSAnnotated>().containingFile
                 }.forEach {
                     typeBuilder.addOriginatingKSFile(it)
                 }

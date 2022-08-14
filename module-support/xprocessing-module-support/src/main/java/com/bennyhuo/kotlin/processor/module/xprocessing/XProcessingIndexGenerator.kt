@@ -1,7 +1,9 @@
 package com.bennyhuo.kotlin.processor.module.xprocessing
 
+import androidx.room.compiler.processing.XElement
 import androidx.room.compiler.processing.XFiler
 import androidx.room.compiler.processing.XProcessingEnv
+import androidx.room.compiler.processing.addOriginatingElement
 import com.bennyhuo.kotlin.processor.module.LibraryIndex
 import com.bennyhuo.kotlin.processor.module.common.IndexGenerator
 import com.bennyhuo.kotlin.processor.module.common.UniElement
@@ -10,13 +12,13 @@ import com.bennyhuo.kotlin.processor.module.utils.generateName
 import com.squareup.javapoet.AnnotationSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
-import javax.lang.model.element.Element
 
 /**
  * Created by benny.
  */
 internal class XProcessingIndexGenerator(
-    private val env: XProcessingEnv
+    private val env: XProcessingEnv,
+    private val processorName: String
 ) : IndexGenerator {
 
     override fun generate(elements: Collection<UniElement>) {
@@ -24,7 +26,7 @@ internal class XProcessingIndexGenerator(
 
         val sortedElementNames = elements.map { it.enclosingTypeName }.distinct().sortedBy { it }
 
-        val indexName = "LibraryIndex_${generateName(sortedElementNames)}"
+        val indexName = "${processorName.capitalize()}Index_${generateName(sortedElementNames)}"
         val typeSpec = TypeSpec.classBuilder(indexName)
             .addAnnotation(
                 AnnotationSpec.builder(LibraryIndex::class.java)
@@ -34,7 +36,7 @@ internal class XProcessingIndexGenerator(
                     ).build()
             ).also { typeBuilder ->
                 elements.forEach {
-                    typeBuilder.addOriginatingElement(it.rawElement as Element)
+                    typeBuilder.addOriginatingElement(it.unwrap<XElement>())
                 }
             }
             .build()

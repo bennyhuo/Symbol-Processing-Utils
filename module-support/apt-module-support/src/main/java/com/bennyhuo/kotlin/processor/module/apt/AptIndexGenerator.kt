@@ -15,7 +15,8 @@ import javax.lang.model.element.Element
  * Created by benny.
  */
 internal class AptIndexGenerator(
-    private val env: ProcessingEnvironment
+    private val env: ProcessingEnvironment,
+    private val processorName: String
 ) : IndexGenerator {
 
     override fun generate(elements: Collection<UniElement>) {
@@ -23,7 +24,7 @@ internal class AptIndexGenerator(
 
         val sortedElementNames = elements.map { it.enclosingTypeName }.distinct().sortedBy { it }
 
-        val indexName = "LibraryIndex_${generateName(sortedElementNames)}"
+        val indexName = "${processorName.capitalize()}Index_${generateName(sortedElementNames)}"
         val typeSpec = TypeSpec.classBuilder(indexName)
             .addAnnotation(
                 AnnotationSpec.builder(LibraryIndex::class.java)
@@ -33,7 +34,7 @@ internal class AptIndexGenerator(
                     ).build()
             ).also { typeBuilder ->
                 elements.forEach {
-                    typeBuilder.addOriginatingElement(it.rawElement as Element)
+                    typeBuilder.addOriginatingElement(it.unwrap<Element>())
                 }
             }
             .build()
