@@ -8,9 +8,9 @@ import javax.lang.model.element.TypeElement
  * Created by benny.
  */
 internal fun Element.getEnclosingType(): TypeElement {
-    return when (val element = enclosingElement) {
+    return when(this) {
+        is TypeElement -> this
         is PackageElement -> throw IllegalArgumentException()
-        is TypeElement -> element
-        else -> element.getEnclosingType()
+        else -> enclosingElement.getEnclosingType()
     }
 }

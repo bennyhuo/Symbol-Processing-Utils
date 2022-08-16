@@ -36,7 +36,9 @@ abstract class XProcessingModuleStep : XProcessingStep {
         }
 
         if (moduleType == MODULE_LIBRARY || moduleType == MODULE_MIXED) {
-            symbolsForIndex.addAll(elementsByAnnotation.values.flatten())
+            symbolsForIndex.addAll(elementsByAnnotation.filterKeys {
+                it in annotationsForIndex
+            }.values.flatten())
         }
 
         if (moduleType == MODULE_LIBRARY) {

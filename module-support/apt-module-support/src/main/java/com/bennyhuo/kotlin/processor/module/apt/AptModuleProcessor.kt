@@ -16,8 +16,9 @@ import javax.lang.model.element.TypeElement
 abstract class AptModuleProcessor : AbstractProcessor() {
 
     lateinit var env: ProcessingEnvironment
-    abstract val processorName: String
 
+    abstract val annotationsForIndex: Set<String>
+    abstract val processorName: String
     open val supportedModuleTypes: Set<Int> = setOf(MODULE_MAIN, MODULE_LIBRARY, MODULE_MIXED)
 
     val moduleType by lazy {
@@ -46,14 +47,16 @@ abstract class AptModuleProcessor : AbstractProcessor() {
             }
 
             if (moduleType == MODULE_MAIN || moduleType == MODULE_MIXED) {
-                val elementsFromLibrary = AptIndexLoader(env, supportedAnnotationTypes).loadUnwrap()
+                val elementsFromLibrary = AptIndexLoader(env, annotationsForIndex).loadUnwrap()
                 processMain(roundEnv, annotatedSymbols.mapValues {
                     it.value + elementsFromLibrary.getOrDefault(it.key, emptyList())
                 })
             }
 
             if (moduleType == MODULE_LIBRARY || moduleType == MODULE_MIXED) {
-                symbolsForIndex.addAll(annotatedSymbols.values.flatten())
+                symbolsForIndex.addAll(annotatedSymbols.filterKeys {
+                    it in annotationsForIndex
+                }.values.flatten())
             }
 
             if (moduleType == MODULE_LIBRARY) {
@@ -67,11 +70,11 @@ abstract class AptModuleProcessor : AbstractProcessor() {
     abstract fun processMain(
         roundEnv: RoundEnvironment,
         annotatedSymbols: Map<String, Set<Element>>
-    ): Set<Element>
+    )
 
     open fun processLibrary(
         roundEnv: RoundEnvironment,
         annotatedSymbols: Map<String, Set<Element>>
-    ): Set<Element> = emptySet()
+    ) = Unit
 
 }
