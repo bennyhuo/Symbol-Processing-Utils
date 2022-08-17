@@ -7,4 +7,5 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    api(project(":module-support:annotations-module-support"))
 }

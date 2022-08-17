@@ -21,11 +21,11 @@ internal class AptIndexLoader(
 
     override fun getIndexes(): List<LibraryIndex> {
         return env.elementUtils.getPackageElement(PACKAGE_NAME)
-            .enclosedElements
-            .filterIsInstance<TypeElement>()
-            .mapNotNull {
+            ?.enclosedElements
+            ?.filterIsInstance<TypeElement>()
+            ?.mapNotNull {
                 it.getAnnotation(LibraryIndex::class.java)
-            }
+            } ?: emptyList()
     }
 
     fun loadUnwrap() = load().mapValues {
