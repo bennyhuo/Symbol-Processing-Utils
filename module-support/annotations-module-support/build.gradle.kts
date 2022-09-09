@@ -4,5 +4,7 @@ plugins {
 
 kotlin {
     jvm()
-    js()
+    js(IR) {
+        nodejs {}
+    }
 }
