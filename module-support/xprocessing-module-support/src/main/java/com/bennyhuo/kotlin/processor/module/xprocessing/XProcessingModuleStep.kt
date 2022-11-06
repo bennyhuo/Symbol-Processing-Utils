@@ -30,9 +30,7 @@ abstract class XProcessingModuleStep : XProcessingStep {
         val deferredSymbols = HashSet<XElement>()
         if (moduleType == MODULE_MAIN || moduleType == MODULE_MIXED) {
             val elementsFromLibrary = XProcessingIndexLoader(env, annotationsForIndex).loadUnwrap()
-            processMain(env, elementsByAnnotation.mapValues {
-                it.value + elementsFromLibrary.getOrDefault(it.key, emptySet())
-            })
+            processMain(env, elementsByAnnotation, elementsFromLibrary)
         }
 
         if (moduleType == MODULE_LIBRARY || moduleType == MODULE_MIXED) {
@@ -50,7 +48,8 @@ abstract class XProcessingModuleStep : XProcessingStep {
 
     abstract fun processMain(
         env: XProcessingEnv,
-        elementsByAnnotation: Map<String, Set<XElement>>
+        elementsByAnnotation: Map<String, Set<XElement>>,
+        elementsByAnnotationFromLibrary: Map<String, Set<XElement>>
     ): Set<XElement>
 
     open fun processLibrary(

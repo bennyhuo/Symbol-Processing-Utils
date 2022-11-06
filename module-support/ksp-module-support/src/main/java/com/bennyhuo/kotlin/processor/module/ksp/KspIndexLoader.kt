@@ -39,6 +39,6 @@ internal class KspIndexLoader(
     }
 
     fun loadUnwrapped() = load().mapValues {
-        it.value.map { it.unwrap<KSAnnotated>() }
+        it.value.map { it.unwrap<KSAnnotated>() }.toSet()
     }
 }

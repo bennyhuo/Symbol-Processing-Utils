@@ -2,9 +2,8 @@ package com.bennyhuo.kotlin.processor.module.xprocessing
 
 import androidx.room.compiler.processing.XElement
 import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XTypeElement
-import com.bennyhuo.kotlin.processor.module.common.IndexLoader
 import com.bennyhuo.kotlin.processor.module.LibraryIndex
+import com.bennyhuo.kotlin.processor.module.common.IndexLoader
 import com.bennyhuo.kotlin.processor.module.common.UniTypeElement
 import com.bennyhuo.kotlin.processor.module.utils.PACKAGE_NAME
 
@@ -26,5 +25,7 @@ internal class XProcessingIndexLoader(
             }
     }
 
-    fun loadUnwrap() = load().mapValues { it.value.map { it.unwrap<XElement>() } }
+    fun loadUnwrap() = load().mapValues {
+        it.value.map { it.unwrap<XElement>() }.toSet()
+    }
 }

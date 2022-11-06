@@ -11,6 +11,8 @@ interface IndexLoader {
 
     fun getTypeElement(typeName: String): UniTypeElement?
 
+    fun getIndexes(): List<LibraryIndex>
+
     fun findAnnotatedElementsByTypeName(enclosingTypeName: String): Collection<Pair<String, UniElement>> {
         val enclosingTypeElement = getTypeElement(enclosingTypeName)!!
         return findAnnotatedElements(enclosingTypeElement)
@@ -32,8 +34,6 @@ interface IndexLoader {
             it to element
         }
     }
-
-    fun getIndexes(): List<LibraryIndex>
 
     fun load(): Map<String, List<UniElement>> {
         return getIndexes().flatMap {

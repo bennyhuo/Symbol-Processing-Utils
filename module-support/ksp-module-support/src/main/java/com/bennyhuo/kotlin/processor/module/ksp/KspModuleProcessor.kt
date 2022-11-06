@@ -34,10 +34,8 @@ abstract class KspModuleProcessor(
         val deferredSymbols = ArrayList<KSAnnotated>()
 
         if (moduleType == MODULE_MAIN || moduleType == MODULE_MIXED) {
-            val elementsFromLibrary = KspIndexLoader(resolver, annotationsForIndex).loadUnwrapped()
-            deferredSymbols += processMain(resolver, annotatedSymbols.mapValues {
-                it.value + elementsFromLibrary.getOrDefault(it.key, emptySet())
-            })
+            val symbolsFromLibrary = KspIndexLoader(resolver, annotationsForIndex).loadUnwrapped()
+            deferredSymbols += processMain(resolver, annotatedSymbols, symbolsFromLibrary)
         }
 
         if (moduleType == MODULE_LIBRARY || moduleType == MODULE_MIXED) {
@@ -53,7 +51,8 @@ abstract class KspModuleProcessor(
 
     abstract fun processMain(
         resolver: Resolver,
-        annotatedSymbols: Map<String, Set<KSAnnotated>>
+        annotatedSymbols: Map<String, Set<KSAnnotated>>,
+        annotatedSymbolsFromLibrary: Map<String, Set<KSAnnotated>>
     ): List<KSAnnotated>
 
     open fun processLibrary(

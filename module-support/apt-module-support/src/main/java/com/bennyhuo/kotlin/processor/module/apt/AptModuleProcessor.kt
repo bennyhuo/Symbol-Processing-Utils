@@ -48,9 +48,7 @@ abstract class AptModuleProcessor : AbstractProcessor() {
 
             if (moduleType == MODULE_MAIN || moduleType == MODULE_MIXED) {
                 val elementsFromLibrary = AptIndexLoader(env, annotationsForIndex).loadUnwrap()
-                processMain(roundEnv, annotatedSymbols.mapValues {
-                    it.value + elementsFromLibrary.getOrDefault(it.key, emptyList())
-                })
+                processMain(roundEnv, annotatedSymbols, elementsFromLibrary)
             }
 
             if (moduleType == MODULE_LIBRARY || moduleType == MODULE_MIXED) {
@@ -69,7 +67,8 @@ abstract class AptModuleProcessor : AbstractProcessor() {
 
     abstract fun processMain(
         roundEnv: RoundEnvironment,
-        annotatedSymbols: Map<String, Set<Element>>
+        annotatedSymbols: Map<String, Set<Element>>,
+        annotatedSymbolsFromLibrary: Map<String, Set<Element>>
     )
 
     open fun processLibrary(
